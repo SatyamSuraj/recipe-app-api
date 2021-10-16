@@ -1,7 +1,8 @@
+from django.db.models.query import QuerySet
 from django.forms import fields
 from rest_framework import serializers
 
-from core.models import Tag, Ingredient
+from core.models import Tag, Ingredient, Recipe
 
 class TagSerializer(serializers.ModelSerializer):
     '''Serializer for Tag object'''
@@ -20,3 +21,20 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
         read_only_fields = ('id',)
         
+
+class RecipeSerializer(serializers.ModelSerializer):
+    '''serialize a recipe'''
+    ingredients = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset = Ingredient.objects.all()
+    )
+
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset = Tag.objects.all()
+    )
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'title', 'ingredients', 'tags', 'time_minutes', 'price', 'link')
+        read_only_fields = ('id',)
